@@ -10,7 +10,33 @@ public class Exercise4 {
     public void loadLocationGraph(String fileName){
       try (BufferedReader bReader = new BufferedReader(new FileReader(fileName))) {
          //Läs inledande lång rad med noder och lägg in i en String[]
-         //Ett alternativ är då en simpel for-loop med i += 3 som läser in relevant info utifrån i och lägger den nya locationen direkt i graph
+         String nodeLine = bReader.readLine();
+         String[] nodeLineArray = nodeLine.split(";");
+
+         for (int i = 0; i < nodeLineArray.length; i += 3) {
+            graph.add(new Location(nodeLineArray[i], Double.parseDouble(nodeLineArray[i + 1]), Double.parseDouble(nodeLineArray[i + 2])));
+         }
+
+         Set<Node> nodeSet = graph.getNodes();
+         String line;
+         while ((line = bReader.readLine()) != null) {
+            String[] nodeInfo = line.split(";");
+            Node nodeFrom = null;
+            Node nodeTo = null;
+            String name = nodeInfo[2];
+            int weight = Integer.parseInt(nodeInfo[3]);
+
+            for (Node node : nodeSet) {
+               if (node.getName().equals(nodeInfo[0].trim())) {
+                  nodeFrom = node;
+               } else if (node.getName().equals(nodeInfo[1].trim())) {
+                  nodeTo = node;
+               }
+            }
+
+            graph.connect(nodeFrom, nodeTo, name, weight);
+         }
+
          //Därefter är varje line en connection, vi kan återigen dela upp infon i en String[]
          //namn på från-nod; namn på till-nod; edge namnet; vikt;
          //Hitta från-nod i graph genom att jämföra .getName()
@@ -48,6 +74,16 @@ public class Exercise4 {
 
     public void loadRecommendationGraph(String fileName) {
       try (BufferedReader bReader = new BufferedReader(new FileReader(fileName))) {
+         String line;
+         while ((line = bReader.readLine()) != null) {
+            String[] nodeInfo = line.split(";");
+            Person person = new Person(nodeInfo[0]);
+            Record record = new Record(nodeInfo[1], nodeInfo[2]);
+            graph.add(person);
+            graph.add(record);
+
+            graph.connect(person, record, null, 0);
+         }
          //personNamn; titel på skiva; skivans artist;
          //Dela upp linen i en String[]
          //Skapa en ny Person och lägg in i graph

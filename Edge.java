@@ -6,7 +6,7 @@ public class Edge<T> {
     public Edge(String name, T to, int weight) {
         this.name = name;
         this.to = to;
-        if (weight > 0) { 
+        if (weight >= 0) { 
             this.weight = weight;
         } else {
             throw new IllegalArgumentException("Weight can not be less than zero");
