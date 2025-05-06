@@ -1,5 +1,3 @@
-package se.su.inlupp;
-
 public class Edge<T> {
     private String name;
     private T to;
