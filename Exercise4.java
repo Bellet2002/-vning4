@@ -62,12 +62,11 @@ public class Exercise4 {
 	            int popularity = getPopularity(record); 	   
 			
 	      //Om noden inte existerar i temp lägg till den (computeIfAbsent()) tillsammans med resultatet från getPopularity
-			result.computeIfAbsent( popularity, k -> new TreeSet<> ( Comparator.comparing(Record :: toString))).add(record); 
+			result.computeIfAbsent( popularity, k -> new TreeSet<>(Comparator.comparing(Record :: toString))).add(record); 
 		   }	   
 		}
 	    }
 	  return result;
-
     }
 
     public int getPopularity(Record item) {
@@ -77,7 +76,23 @@ public class Exercise4 {
     }
 
     public SortedMap<Integer, Set<Record>> getTop5() {
-      SortedMap<Integer, Set<Record>> result = new TreeMap<>();
+      SortedMap<Integer, Set<Record>> result = new TreeMap<>(Comparator.reverseOrder());
+
+      for (Node node : graph.getNodes()) {
+         if (node instanceof Record) {
+            result.computeIfAbsent(this.getPopularity((Record)node), k -> new HashSet<>()).add((Record)node);
+         }
+      }
+
+      int count = 0;
+      Iterator<Integer> i = result.keySet().iterator();
+      while (i.hasNext()) {
+         i.next();
+         if (count >= 5) {
+            i.remove();
+         }
+         count++;
+      }
       //Gå genom grafen
       //Om noden är en record lägg till med resultatet från getPopularity som key
       //Ta bort överflödiga noder 
