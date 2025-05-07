@@ -7,7 +7,7 @@ import java.util.*;
 public class Exercise4 {
 	private Graph<Node> graph = new ListGraph<>();
 
-    public void loadLocationGraph(String fileName){
+   public void loadLocationGraph(String fileName){
       try (BufferedReader bReader = new BufferedReader(new FileReader(fileName))) {
          //Läs inledande lång rad med noder och lägg in i en String[]
          String nodeLine = bReader.readLine();
@@ -50,18 +50,30 @@ public class Exercise4 {
       }
     }
 
-    public SortedMap<Integer, SortedSet<Record>> getAlsoLiked(Record item) {
-      SortedMap<Integer, SortedSet<Record>> result = new TreeMap<>();
+   public SortedMap<Integer, SortedSet<Record>> getAlsoLiked(Record item) {
+      SortedMap<Integer, SortedSet<Record>> result = new TreeMap<>(Comparator.reverseOrder());
       //Gå genom nodens edges
+	   for(Edge<Node> edge1: graph.getEdgesFrom(item)){
+	      Node personNode = edge1.getDestination(); 	
+		
       //För varje person/node gå genom edges
-      //Om noden inte existerar i temp lägg till den (computeIfAbsent()) tillsammans med resultatet från getPopularity
-       return result;
+	      for(Edge <Node> edge2 : graph.getEdgesFrom(personNode)){
+		      if(edge2.getDestination() instanceof Record record) {
+	            int popularity = getPopularity(record); 	   
+			
+	      //Om noden inte existerar i temp lägg till den (computeIfAbsent()) tillsammans med resultatet från getPopularity
+			result.computeIfAbsent( popularity, k -> new TreeSet<> ( Comparator.comparing(Record :: toString))).add(record); 
+		   }	   
+		}
+	    }
+	  return result;
+
     }
 
     public int getPopularity(Record item) {
       //Hämta en collection med edges från noden med hjälv av getEdgesFrom
       //Returnera antalet
-       return -1;
+      return graph.getEdgesFrom(item).size();
     }
 
     public SortedMap<Integer, Set<Record>> getTop5() {
